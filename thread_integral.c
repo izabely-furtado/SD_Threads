@@ -1,18 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
- * File:   threads.c
- * Author: IzabelyFurtado
- *
- * Created on 22 de Março de 2016, 20:49
- * 
- * Calcula a integral de f(x) em paralelo 
- * considerando o número de núcleos REAIS
- */
+/* ====================================================================
+ * File:   thread_integral.c
+ * Author: 20121bsi0040 - Izabely Almeida Furtado Corrêa
+ * Descrição: Este programa calcula a integral através de N threads
+ * N = numero de threads do computador
+ * Created on 30 de Março de 2016, 09:03
+ * Para compilar:
+ *     gcc thread_integral.c -o thread_integral -lpthread -lm -Wall
+ * Para executar:
+ *     time ./thread_integral 0.0 1.0 200000000
+ * ====================================================================*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,7 +30,7 @@ double AreaTrapezio(double dx, double h1, double h2){
 
 //função qualquer f(x)
 double f(double x){
-    return (4/1+x*x);
+    return (4*sqrt(1-x*x));
 }
 
 //criando limite
@@ -45,11 +41,11 @@ typedef struct limite
     long n;
 }Limite;
 
-Limite *criaLim(double inferior, double superior, long n){
+Limite *criaLim(double inferior, double superior, long numero){
     Limite *l = (Limite *) malloc(sizeof(Limite));
     l->inferior = inferior;
     l->superior = superior;
-    l->n = n;
+    l->n = numero;
     return l;
 }
 
@@ -69,7 +65,7 @@ double CalculaArea(double a, double b, int N){
 
 //ponteiro pra função ... 
 //dividindo f(x) para ser calculada por partes... (estilo Jack)
-void *funcaoX(Limite *lim){
+void *ThreadCalculaArea(Limite *lim){
     double area2 = CalculaArea(lim->inferior, lim->superior, lim->n);
     
     //controlando area que pode haver condição de corrida
@@ -90,7 +86,7 @@ void CriaThread(){
     //dando a cada thread um objetivo
     for(i=0; i<nProc; i++) {
         Limite* l = criaLim((1/nProc)*i - (1/nProc), (1/nProc)*i)
-        pthread_create(&(threads[i]), NULL, funcaoX, &l);
+        pthread_create(&(threads[i]), NULL, ThreadCalculaArea, &l);
     }
     //mandando bala
     for(k=0; k<nProc; k++) {
@@ -99,14 +95,12 @@ void CriaThread(){
     
 }
 
-/*
- * 
- */
+
 int main(int argc, char** argv) {
     double a, b;
     int n;
     
-    25000000
+    long numero = 25000000;
     
     if (pthread_mutex_init(&lock, NULL) != 0)
     {

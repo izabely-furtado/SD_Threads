@@ -18,6 +18,8 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <math.h>
+
 
 double integral = 0.0;
 
