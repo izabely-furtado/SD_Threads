@@ -21,7 +21,7 @@
 double integral = 0.0;
 pthread_mutex_t lock;
 int nProc = get_nprocs();
-pthread_t threads[nProc];
+pthread_t threads[];
 
 //função que calcula a area de um trapézio
 double AreaTrapezio(double dx, double h1, double h2){
@@ -43,7 +43,7 @@ typedef struct limite
     long n;
 }Limite;
 
-Limite *criaLim(double inferior, double superior, long numero){
+Limite CriaLim(double inferior, double superior, long numero){
     Limite *l = (Limite *) malloc(sizeof(Limite));
     l->inferior = inferior;
     l->superior = superior;
@@ -83,12 +83,12 @@ void CriaThread(){
     int i, k;
     Limite* l;
     //criando vetor de threads
-    threads[] = (pthread_t *) malloc(nProc*sizeof(pthread_t));
+    threads[nProc] = (pthread_t *) malloc(nProc*sizeof(pthread_t));
     
     //dando a cada thread um objetivo
     for(i=0; i<nProc; i++) {
-        l = criaLim((1/nProc)*i - (1/nProc), (1/nProc)*i);
-        pthread_create(&(threads[i]), NULL, ThreadCalculaArea, &l);
+        l = CriaLim((1/nProc)*i - (1/nProc), (1/nProc)*i);
+        pthread_create(&(threads[i]), NULL, &ThreadCalculaArea, &l);
     }
     //mandando bala
     for(k=0; k<nProc; k++) {
