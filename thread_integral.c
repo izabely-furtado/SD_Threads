@@ -20,7 +20,6 @@
 
 double integral = 0.0;
 pthread_mutex_t lock;
-int nProc = get_nprocs();
 pthread_t threads[];
 
 //função que calcula a area de um trapézio
@@ -79,27 +78,27 @@ void *ThreadCalculaArea(Limite *lim){
 }
 
 //criando threads
-void CriaThread(){
+void CriaThread(int quantThreads){
     int i, k;
     Limite* l;
+    int nProc = get_nprocs();
     //criando vetor de threads
-    threads[nProc] = (pthread_t *) malloc(nProc*sizeof(pthread_t));
+    threads[quantThreads] = (pthread_t *) malloc(quantThreads*sizeof(pthread_t));
     
     //dando a cada thread um objetivo
-    for(i=0; i<nProc; i++) {
-        l = CriaLim((1/nProc)*i - (1/nProc), (1/nProc)*i);
+    for(i=0; i<quantThreads; i++) {
+        l = CriaLim((1/quantThreads)*i - (1/quantThreads), (1/quantThreads)*i);
         pthread_create(&(threads[i]), NULL, &ThreadCalculaArea, &l);
     }
     //mandando bala
-    for(k=0; k<nProc; k++) {
+    for(k=0; k<quantThreads; k++) {
         pthread_join(threads[k], NULL);
     }
 }
 
 
 int main(int argc, char** argv) {
-    double a, b;
-    int n;
+    int nProc = get_nprocs();
     
     long numero = 25000000;
     
@@ -108,7 +107,7 @@ int main(int argc, char** argv) {
         printf("\n mutex init failed\n");
         return 1;
     }
-    CriaThread();
+    CriaThread(nProc);
     printf("A area da curva é \n%.12lf\n", integral);
     pthread_mutex_destroy(&lock);
     return (EXIT_SUCCESS);
