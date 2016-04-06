@@ -42,7 +42,7 @@
         long n;
     }Limite;
 
-    Limite CriaLim(double inferior, double superior, long numero){
+    Limite *CriaLim(double inferior, double superior, long numero){
         Limite *l = (Limite *) malloc(sizeof(Limite));
         l->inferior = inferior;
         l->superior = superior;
@@ -68,7 +68,7 @@
     //dividindo f(x) para ser calculada por partes... (estilo Jack)
     void *ThreadCalculaArea(Limite *lim){
         double area2 = CalculaArea(lim->inferior, lim->superior, lim->n);
-
+        
         //controlando area que pode haver condição de corrida
         pthread_mutex_lock(&lock);
         integral += area2; 
